@@ -19,4 +19,4 @@ def return_manytypes_data(data):
 
 
 res=return_manytypes_data("Ashwin")
-print(res)
+print(res
