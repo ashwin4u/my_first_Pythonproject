@@ -21,7 +21,6 @@ def return_manytypes_data(data):
 res=return_manytypes_data("Ashwin")
 print(res)
 print("The Result is:",res)
-print("Good Evening Everyone.Happy Learning")
-print("Hello")
+print("Hello All")
 
 
