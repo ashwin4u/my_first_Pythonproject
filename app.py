@@ -4,3 +4,5 @@ def greet():
 greet()
 print("Welcome")
 print("Welcome")
+print("Welcome")
+
