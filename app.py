@@ -2,8 +2,6 @@ def greet():
     print("GM")
 
 greet()
-print("Welcome")
-print("DOne")
-print("DOne")
+greet()
 
 
