@@ -1,7 +1,5 @@
-def greet():
-    print("GM")
+def say_hello():
+    return "Hello, Jenkins!"
 
-greet()
-greet()
-
-
+if __name__ == "__main__":
+    print(say_hello())
