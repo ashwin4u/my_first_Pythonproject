@@ -3,6 +3,6 @@ def greet():
 
 greet()
 print("Welcome")
-print("Good Try")
+print("DOne")
 
 
