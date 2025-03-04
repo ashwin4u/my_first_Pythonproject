@@ -3,5 +3,5 @@ def say_hello():
 
 if __name__ == "__main__":
     print(say_hello())
-    print("Today we move this code to Testing Department")
+    print("move to testing")
 
