@@ -3,8 +3,7 @@ def say_hello():
 
 if __name__ == "__main__":
     print(say_hello())
-    print("Today is May 8th")
-    print("Bye")
+    print("Done")
     
 
 
