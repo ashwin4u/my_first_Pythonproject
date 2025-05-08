@@ -3,9 +3,8 @@ def say_hello():
 
 if __name__ == "__main__":
     print(say_hello())
-    print("Avinash changed")
-    print("I completed it")
-    print("Done")
+    print("Today us May 8th")
+    
 
 
 
