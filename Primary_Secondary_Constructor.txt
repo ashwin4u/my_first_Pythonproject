@@ -1,0 +1,22 @@
+package com.ashwin.introduction
+
+class cseccar(val brand:String,val engtype:String,val tyres:Int){
+    init {
+        println("Object has Created")
+    }
+    constructor( brand: String, engtype: String) : this(brand,engtype,4)
+
+    fun showdetails(){
+        println("Name is: $brand Engine is: $engtype and no of Tyres are:$tyres")
+    }
+}
+
+fun main() {
+    val c1 = cseccar("i10","Petrol")
+    c1.showdetails()
+    val c2 = cseccar("i10","Petrol")
+    c2.showdetails()
+    val c3 = cseccar("i10","Petrol",6)
+    c3.showdetails()
+
+}
