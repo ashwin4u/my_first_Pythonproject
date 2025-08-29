@@ -1,0 +1,339 @@
+-------------------------------------------------------------------
+Task-8: 1. Create a Cupcake app that displays an order flow for cupcakes, allowing the user to choose the cupcake flavor, quantity, and pickup date
+
+2. Create a cupcake ordering app that allows the user to send the order to another app and allows for canceling an order.
+----------------------------------------------------------------
+Implementation:
+
+Step-I: Add Dependencies:
+-------------------------
+
+--->open build.gradle.kts(Module:app):
+======================================
+
+Go To Dependencies Block and Add the following lines at the end.
+
+{
+//Navigation Dependency
+val nav_version = "2.9.3"
+    implementation("androidx.navigation:navigation-compose:${nav_version}")
+
+//ViewModel Dependency
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+
+}
+
+--------------------------------------------------------------
+
+1. OrderViewModel.kt
+package com.ashwin.cupcake_aug26.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+
+class OrderViewModel : ViewModel() {
+
+    var quantity: Int = 0
+        private set
+
+    var flavor: String = ""
+        private set
+
+    var date: String = ""
+        private set
+
+    fun setQuantity(newQuantity: Int) { quantity = newQuantity }
+    fun setFlavor(newFlavor: String) { flavor = newFlavor }
+    fun setDate(newDate: String) { date = newDate }
+
+    fun resetOrder() {
+        quantity = 0
+        flavor = ""
+        date = ""
+    }
+
+    fun getPickupOptions(): List<String> {
+        val options = mutableListOf<String>()
+        val calendar = Calendar.getInstance()
+
+        repeat(4) {
+            val formatted = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                .format(calendar.time)
+            options.add(formatted)
+            calendar.add(Calendar.DATE, 1)
+        }
+        return options
+    }
+
+    fun getOrderSummary(): String =
+        "Order Summary:\n" +
+                "Quantity: $quantity\n" +
+                "Flavor: $flavor\n" +
+                "Pickup Date: $date"
+}
+
+-------------------------------------------------------------
+2. screens 
+
+a. StartScreen.kt
+package com.ashwin.cupcake_aug26.ui.screens
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun StartScreen(onNext: (Int) -> Unit) {
+    Column(Modifier.fillMaxSize().padding(85.dp)) {
+        Text("Choose quantity")
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { onNext(1) }) { Text("1 Cupcake") }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { onNext(6) }) { Text("6 Cupcakes") }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { onNext(12) }) { Text("12 Cupcakes") }
+    }
+}
+  -------------------------------------------------------
+
+
+b. FlavorScreen.kt
+
+package com.ashwin.cupcake_aug26.ui.screens
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.ashwin.cupcake_aug26.ui.viewmodel.OrderViewModel
+
+@Composable
+fun FlavorScreen(
+    onNext: () -> Unit,
+    onCancel: () -> Unit,
+    viewModel: OrderViewModel
+) {
+    val flavors = listOf("Vanilla", "Chocolate", "Red Velvet", "Lemon")
+
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Text("Choose Flavor")
+        Spacer(Modifier.height(16.dp))
+        flavors.forEach { flavor ->
+            Button(
+                onClick = {
+                    viewModel.setFlavor(flavor)
+                    onNext()
+                },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Text(flavor)
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        OutlinedButton(onClick = onCancel) { Text("Cancel Order") }
+    }
+}
+
+--------------------------------------------------------------
+
+c. PickupScreen.kt
+
+package com.ashwin.cupcake_aug26.ui.screens
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.ashwin.cupcake_aug26.ui.viewmodel.OrderViewModel
+
+@Composable
+fun PickupScreen(
+    onNext: () -> Unit,
+    onCancel: () -> Unit,
+    viewModel: OrderViewModel
+) {
+    val options = viewModel.getPickupOptions()
+
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Text("Choose Pickup Date")
+        Spacer(Modifier.height(16.dp))
+        options.forEach { date ->
+            Button(
+                onClick = {
+                    viewModel.setDate(date)
+                    onNext()
+                },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) { Text(date) }
+        }
+        Spacer(Modifier.height(16.dp))
+        OutlinedButton(onClick = onCancel) { Text("Cancel Order") }
+    }
+}
+
+-----------------------------------------------------------------
+d. SummaryScreen.kt
+
+package com.ashwin.cupcake_aug26.ui.screens
+
+import android.content.Context
+import android.content.Intent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.ashwin.cupcake_aug26.ui.viewmodel.OrderViewModel
+
+@Composable
+fun SummaryScreen(
+    viewModel: OrderViewModel,
+    onCancel: () -> Unit
+) {
+    val summary = viewModel.getOrderSummary()
+    val context = LocalContext.current
+
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Text(summary)
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { shareOrder(context, summary) }) {  // ✅ call normal function
+            Text("Send Order")
+        }
+        Spacer(Modifier.height(8.dp))
+        OutlinedButton(onClick = onCancel) { Text("Cancel Order") }
+    }
+}
+
+/** Normal (non-@Composable) helper to launch the Android share sheet. */
+fun shareOrder(context: Context, summary: String) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, summary)
+    }
+    context.startActivity(Intent.createChooser(intent, "Share Cupcake Order"))
+}
+
+
+---------------------------------------------------------------
+
+3. navigation
+
+a. CupcakeNavHost.kt
+
+package com.ashwin.cupcake_aug26.ui.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.ashwin.cupcake_aug26.ui.screens.FlavorScreen
+import com.ashwin.cupcake_aug26.ui.screens.PickupScreen
+import com.ashwin.cupcake_aug26.ui.screens.StartScreen
+import com.ashwin.cupcake_aug26.ui.screens.SummaryScreen
+import com.ashwin.cupcake_aug26.ui.viewmodel.OrderViewModel
+
+enum class CupcakeScreen { Start, Flavor, Pickup, Summary }
+
+@Composable
+fun CupcakeNavHost(
+    navController: NavHostController,
+    viewModel: OrderViewModel
+) {
+    NavHost(navController = navController, startDestination = CupcakeScreen.Start.name) {
+
+        composable(CupcakeScreen.Start.name) {
+            StartScreen(onNext = { qty ->
+                viewModel.setQuantity(qty)
+                navController.navigate(CupcakeScreen.Flavor.name)
+            })
+        }
+
+        composable(CupcakeScreen.Flavor.name) {
+            FlavorScreen(
+                onNext = { navController.navigate(CupcakeScreen.Pickup.name) },
+                onCancel = {
+                    viewModel.resetOrder()
+                    navController.popBackStack(CupcakeScreen.Start.name, inclusive = false)
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(CupcakeScreen.Pickup.name) {
+            PickupScreen(
+                onNext = { navController.navigate(CupcakeScreen.Summary.name) },
+                onCancel = {
+                    viewModel.resetOrder()
+                    navController.popBackStack(CupcakeScreen.Start.name, inclusive = false)
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(CupcakeScreen.Summary.name) {
+            SummaryScreen(
+                viewModel = viewModel,
+                onCancel = {
+                    viewModel.resetOrder()
+                    navController.popBackStack(CupcakeScreen.Start.name, inclusive = false)
+                }
+            )
+        }
+    }
+}
+
+--------------------------------------------------------------
+
+4. MainActivity.kt
+
+package com.ashwin.cupcake_aug26
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.navigation.compose.rememberNavController
+import com.ashwin.cupcake_aug26.ui.navigation.CupcakeNavHost
+import com.ashwin.cupcake_aug26.ui.viewmodel.OrderViewModel
+
+class MainActivity : ComponentActivity() {
+
+    private val orderViewModel: OrderViewModel by viewModels() // ✅ scoped to Activity
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val navController = rememberNavController()
+            CupcakeNavHost(navController = navController, viewModel = orderViewModel)
+        }
+    }
+}
+
+---------------------------xxxxxxxxxxxxxx----------------------
+
