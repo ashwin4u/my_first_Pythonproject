@@ -1,0 +1,104 @@
+Task-9:
+
+
+@Composable
+fun TitleScreen(navController: NavController) {
+    Column(modifier=Modifier
+        .fillMaxSize()
+        .wrapContentSize(Alignment.Center)
+    ){
+        Text(text = "Welcome All",
+            color = Color.Red,
+            fontSize = 45.sp,
+            fontWeight = FontWeight.Bold
+            )
+        Spacer(modifier = Modifier.height(45.dp))
+
+        Button(
+            onClick = {
+                navController.navigate("game")
+            }
+
+        ) {
+            Text(text = "Start Game")
+        }
+    }
+
+}
+
+@Composable
+fun GameScreen() {
+    val question = Question(
+        text = "What is the official language for Android Development?",
+        options = listOf("Java", "Kotlin", "Python", "C++"),
+        answer = "Kotlin"
+    )
+
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+    var showResult by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) {
+        Text(
+            text = question.text,
+            modifier = Modifier.padding(start=30.dp),
+            color = Color.Red,
+            fontWeight = FontWeight.Bold
+            )
+        Spacer(modifier = Modifier.height(45.dp))
+
+        for (option in question.options) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                RadioButton(
+                    selected = selectedOption == option,
+                    onClick = { selectedOption = option }
+                )
+                Text(text = option, modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(onClick = { showResult = true },
+            modifier = Modifier.padding(start=145.dp)
+            ) {
+            Text("Submit Answer")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (showResult) {
+            Text(
+                text = if (selectedOption == question.answer)
+                    "Correct!"
+                else
+                    "Wrong! Correct: ${question.answer}"
+            )
+        }
+
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun TitleScreenPreview() {
+    // Use a dummy NavController from a rememberNavController in a local NavHostController preview scope
+    val navController = rememberNavController()
+    TitleScreen(navController)
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun GameScreenPreview() {
+    GameScreen()
+}
+
