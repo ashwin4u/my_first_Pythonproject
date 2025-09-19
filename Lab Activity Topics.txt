@@ -1,0 +1,24 @@
+
+1. Null Safety,Extension Functions
+2. Data Classes and Immutability
+3. Basic UI Layout with Jetpack Compose
+4. Counter App with Increment, Decrement, and Reset Features using Jetpack Compose
+5. Understanding Android Activity Lifecycle Transitions
+6. Real-Time Temperature Converter Using ViewModel and LiveData in Jetpack Compose
+7. "Implementing a Product List with RecyclerView and Navigation to Product Detail 
+Screen in a Shopping Cart Application"
+8. "Developing a Movie Library App with RecyclerView for Movie List and Navigation to Detailed Movie Screens"
+9. "Designing a Room Database for Storing Lab Equipment Information in a Jetpack 
+Compose Application"
+10. Building a Jetpack Compose Form to Add and Edit Lab Equipment Details
+11. Visibility Modifiers
+12. Abstract Classes and Interfaces
+13. Real-Time Registration Form with Live Data Binding Using Jetpack Compose
+14. User List Display with Clickable Items and ViewModel Integration in Jetpack Compose
+15. Simple To-Do List App Using ViewModel and LiveData
+16. Understanding Android Activity Lifecycle Transitions
+17. "Building a Recipe App with RecyclerView for Recipe List and Navigation to Step-by-Step Cooking Instructions"
+18. Creating a Task Management App with RecyclerView for Task List and Detailed Task View with Priority and Due Date
+19. Displaying Lab Equipment List
+20. Implementing a Confirmation Dialog in Jetpack Compose for Deleting Lab Equipment
+21.Constructors in Kotlin
